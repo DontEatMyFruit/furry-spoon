@@ -1,0 +1,73 @@
+version: '2.1'
+
+services:
+  plex:
+    container_name: plex
+    image: linuxserver/plex
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - TZ=America/Chicago
+      - PLEX_CLAIM=
+      - PLEX_UID=1000
+      - PLEX_GID=1000
+    hostname: Plex
+    volumes:
+      - /pathtoconfig:/config
+      - /pathtotranscode:/transcode
+      - /pathtomovies:/movies
+      - /pathtotv:/data/tvshows
+
+  sonarr:
+    container_name: sonarr
+    image: linuxserver/sonarr
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - pathtoconfig:/config
+      - pathtotv:/tv
+      - pathtodownloads:/downloads
+
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - pathtoconfig:/config
+      - pathtomovies:/movies
+      - pathtodownloads:/downloads
+
+  sabnzbd:
+     image: linuxserver/sabnzbd:latest
+     container_name: sabnzbd
+     volumes:
+       - pathtoconfig:/config
+       - pathtodownloads:/downloads
+       - pathtoincomplete-downloads:/incomplete-downloads
+     restart: unless-stopped
+     network_mode: host
+     environment:
+       - TZ=America/Chicago
+       - PUID=1000
+       - PGID=1000
+
+  organizr:
+     image: lsiocommunity/organizr
+     container_name: organizr
+     restart: unless-stopped
+     network_mode: host
+     volumes:
+       - /home/docker/organizr/config:/config
+     environment:
+       - PUID=1000
+       - PGID=1000
+       - TZ=America/Chicago
